@@ -1,0 +1,11 @@
+Model Information:
+* title:	Audi A7 3.0t
+* source:	https://sketchfab.com/3d-models/audi-a7-30t-6f069b3cf02947f4a78d54c4462812f3
+* author:	J5nny™ (https://sketchfab.com/Wekfest23)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Audi A7 3.0t" (https://sketchfab.com/3d-models/audi-a7-30t-6f069b3cf02947f4a78d54c4462812f3) by J5nny™ (https://sketchfab.com/Wekfest23) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

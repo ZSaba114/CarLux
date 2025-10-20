@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.carlux",
+  "appName": "CARLux",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

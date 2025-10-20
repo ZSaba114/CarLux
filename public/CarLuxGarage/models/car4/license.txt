@@ -1,0 +1,11 @@
+Model Information:
+* title:	Alfa Romeo 4C GR3 Roadcar
+* source:	https://sketchfab.com/3d-models/alfa-romeo-4c-gr3-roadcar-046973104ce7430c9ad7df0b77e1416e
+* author:	MattsActuallyUsefulModels (https://sketchfab.com/MattsActuallyUsefulModels)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Alfa Romeo 4C GR3 Roadcar" (https://sketchfab.com/3d-models/alfa-romeo-4c-gr3-roadcar-046973104ce7430c9ad7df0b77e1416e) by MattsActuallyUsefulModels (https://sketchfab.com/MattsActuallyUsefulModels) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

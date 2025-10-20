@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  background-color: #000;
+  color: white;
+}
+
+header {
+  text-align: center;
+  margin: 1em 0;
+}
+
+main#carsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* ✅ toujours 4 colonnes */
+  gap: 20px; /* espace entre les voitures */
+  padding: 20px;
+}
+
+.carContainer {
+  height: 50vh;
+  cursor: pointer;
+  border: 1px solid #807272;
+  background-color: #332c33;
+  box-shadow: 0 5px 15px rgb(109, 34, 109),
+              5px 2px 2px rgb(124, 67, 124);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}

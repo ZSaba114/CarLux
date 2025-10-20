@@ -1,0 +1,11 @@
+Model Information:
+* title:	2013 Equipped Jeep Wrangler Unlimited Rubicon
+* source:	https://sketchfab.com/3d-models/2013-equipped-jeep-wrangler-unlimited-rubicon-e3ecbf7d1fda464cb84d4bf41925d383
+* author:	Ddiaz Design (https://sketchfab.com/ddiaz-design)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "2013 Equipped Jeep Wrangler Unlimited Rubicon" (https://sketchfab.com/3d-models/2013-equipped-jeep-wrangler-unlimited-rubicon-e3ecbf7d1fda464cb84d4bf41925d383) by Ddiaz Design (https://sketchfab.com/ddiaz-design) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

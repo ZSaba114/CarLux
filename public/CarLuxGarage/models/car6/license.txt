@@ -1,0 +1,11 @@
+Model Information:
+* title:	1995 McLaren F1
+* source:	https://sketchfab.com/3d-models/1995-mclaren-f1-103d22fdc1d94045af4d987efa077e37
+* author:	OUTPISTON (https://sketchfab.com/outpiston)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "1995 McLaren F1" (https://sketchfab.com/3d-models/1995-mclaren-f1-103d22fdc1d94045af4d987efa077e37) by OUTPISTON (https://sketchfab.com/outpiston) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
