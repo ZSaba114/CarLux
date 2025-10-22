@@ -14,23 +14,23 @@
           
           <ion-item class="input-item">
             <ion-label position="floating">Nom</ion-label>
-            <ion-input v-model="newAccessory.name" type="text" required></ion-input>
+            <ion-input v-model="newAccessory.name" type="text"></ion-input>
           </ion-item>
 
           <ion-item class="input-item">
             <ion-label position="floating">Description</ion-label>
-            <ion-textarea v-model="newAccessory.description" rows="3" required></ion-textarea>
+            <ion-textarea v-model="newAccessory.description" rows="3"></ion-textarea>
           </ion-item>
 
           <div class="row-fields">
             <ion-item class="input-item half-width">
                 <ion-label position="floating">Prix (€)</ion-label>
-                <ion-input v-model.number="newAccessory.price" type="number" required min="0" step="0.01"></ion-input>
+                <ion-input v-model.number="newAccessory.price" type="number" min="0" step="0.01"></ion-input>
             </ion-item>
 
             <ion-item class="input-item half-width">
               <ion-label position="floating">Stock</ion-label>
-              <ion-input v-model.number="newAccessory.stock" type="number" required min="0" step="1"></ion-input>
+              <ion-input v-model.number="newAccessory.stock" type="number" min="0" step="1"></ion-input>
             </ion-item>
           </div>
 
@@ -53,7 +53,7 @@
             <img :src="newAccessory.imageUrl" :alt="newAccessory.name" class="image-preview"/>
           </div>
 
-          <ion-button expand="block" type="submit" class="submit-button" :disabled="!newAccessory.imageUrl || isUploading">
+          <ion-button expand="block" type="submit" class="submit-button" :disabled="isUploading">
             {{ isEditing ? 'Sauvegarder les Modifications' : 'Ajouter l\'Accessoire' }}
           </ion-button>
           
@@ -103,6 +103,7 @@ import { collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc } from 'fireb
 
 const fileInput = ref(null);
 const accessories = ref([]);
+// Initialize price and stock to null
 const newAccessory = ref({ name: '', description: '', price: null, stock: null, imageUrl: '', imageFile: null });
 const isEditing = ref(false);
 const editingAccessoryId = ref(null);
@@ -124,40 +125,66 @@ let unsubscribe;
 onMounted(() => { unsubscribe = fetchAccessories(); });
 onUnmounted(() => { if (unsubscribe) { unsubscribe(); } });
 
+
 const saveAccessory = async () => {
-  if (!newAccessory.value.name || !newAccessory.value.description || newAccessory.value.price === null || !newAccessory.value.stock || !newAccessory.value.imageUrl) {
-    setMessage('Veuillez remplir tous les champs et sélectionner une image !', 'error');
-    return;
-  }
-  isUploading.value = true;
-  setMessage(isEditing.value ? 'Sauvegarde en cours...' : 'Ajout en cours...', 'info');
+    
+    // Data Preparation: Convert to numbers for reliable checking.
+    const finalPrice = Number(newAccessory.value.price);
+    const finalStock = Number(newAccessory.value.stock);
 
-  try {
-    const finalBase64Url = newAccessory.value.imageUrl;
-    if (finalBase64Url.length > 800000) throw new Error("Image trop volumineuse.");
+    const isImageEmpty = !newAccessory.value.imageUrl;
+    
+    // Check if price/stock are INVALID (NaN) or NEGATIVE, but allow null/empty strings.
+    // If the user entered something that wasn't a valid number, it fails.
+    const isPriceInvalid = isNaN(finalPrice) || finalPrice < 0;
+    const isStockInvalid = isNaN(finalStock) || finalStock < 0;
+    
+    // If the field was left empty (null or ''), finalPrice/finalStock will be 0 and isNaN(0) is false, so it passes.
+    // The only mandatory check remaining is the image, and the non-negativity of numbers if they exist.
 
-    const dataToSave = { 
-      name: newAccessory.value.name, 
-      description: newAccessory.value.description, 
-      price: newAccessory.value.price, 
-      stock: newAccessory.value.stock, 
-      imageUrl: finalBase64Url 
-    };
-
-    if (isEditing.value) {
-      await updateDoc(doc(db, 'accessories', editingAccessoryId.value), dataToSave);
-      setMessage(`Accessoire "${dataToSave.name}" modifié avec succès !`, 'success');
-    } else {
-      await addDoc(collection(db, 'accessories'), dataToSave);
-      setMessage(`Accessoire "${dataToSave.name}" ajouté avec succès !`, 'success');
+    if (isImageEmpty) {
+        setMessage('Veuillez sélectionner une image !', 'error');
+        return;
     }
-    resetForm();
-  } catch (error) {
-    console.error(error);
-    setMessage(`Erreur: ${error.message}`, 'error');
-  } finally {
-    isUploading.value = false;
-  }
+
+    if (isPriceInvalid || isStockInvalid) {
+         setMessage('Le Prix et le Stock doivent être des nombres valides (non négatifs).', 'error');
+         return;
+    }
+    
+    // If validation passes, ensure we save 0 if the field was left empty (null/'' become 0 via Number())
+    const priceToSave = newAccessory.value.price === null || newAccessory.value.price === '' ? 0 : newAccessory.value.price;
+    const stockToSave = newAccessory.value.stock === null || newAccessory.value.stock === '' ? 0 : newAccessory.value.stock;
+
+    isUploading.value = true;
+    setMessage(isEditing.value ? 'Sauvegarde en cours...' : 'Ajout en cours...', 'info');
+
+    try {
+        const finalBase64Url = newAccessory.value.imageUrl;
+        if (finalBase64Url && finalBase64Url.length > 800000) throw new Error("Image trop volumineuse. Veuillez en choisir une plus petite.");
+
+        const dataToSave = { 
+            name: newAccessory.value.name || '', // Save empty string if left blank
+            description: newAccessory.value.description || '', // Save empty string if left blank
+            price: priceToSave, 
+            stock: stockToSave, 
+            imageUrl: finalBase64Url 
+        };
+
+        if (isEditing.value) {
+            await updateDoc(doc(db, 'accessories', editingAccessoryId.value), dataToSave);
+            setMessage(`Accessoire "${dataToSave.name}" modifié avec succès !`, 'success');
+        } else {
+            await addDoc(collection(db, 'accessories'), dataToSave);
+            setMessage(`Accessoire "${dataToSave.name}" ajouté avec succès !`, 'success');
+        }
+        resetForm();
+    } catch (error) {
+        console.error(error);
+        setMessage(`Erreur: ${error.message}`, 'error');
+    } finally {
+        isUploading.value = false;
+    }
 };
 
 const startEdit = (accessory) => {
@@ -199,23 +226,39 @@ const selectMobileImage = async () => {
   await actionSheet.present();
 };
 const captureImage = async (source) => {
-  try { const photo = await Camera.getPhoto({ quality:70, allowEditing:false, resultType:CameraResultType.DataUrl, source, presentationStyle:'fullscreen' }); newAccessory.value.imageUrl = photo.dataUrl; newAccessory.value.imageFile = photo; setMessage('Image sélectionnée (Base64).', 'info'); }
+  try { 
+    const photo = await Camera.getPhoto({ quality:70, allowEditing:false, resultType:CameraResultType.DataUrl, source, presentationStyle:'fullscreen' }); 
+    newAccessory.value.imageUrl = photo.dataUrl; 
+    newAccessory.value.imageFile = photo; 
+    setMessage('Image sélectionnée (Base64).', 'info'); 
+  }
   catch(e){ console.log("Erreur image :", e); }
 };
 const handleFileChange = (event) => {
   const file = event.target.files[0];
-  if(file){ const reader = new FileReader(); reader.onload = e => newAccessory.value.imageUrl = e.target.result; reader.readAsDataURL(file); newAccessory.value.imageFile = file; setMessage('Image sélectionnée (Base64).','info'); } 
+  if(file){ 
+    const reader = new FileReader(); 
+    reader.onload = e => newAccessory.value.imageUrl = e.target.result; 
+    reader.readAsDataURL(file); 
+    newAccessory.value.imageFile = file; 
+    setMessage('Image sélectionnée (Base64).','info'); 
+  } 
   else if(!isEditing.value){ newAccessory.value.imageUrl=''; newAccessory.value.imageFile=null; }
 };
 
-const resetForm = () => { newAccessory.value = { name:'', description:'', price:null, stock:null, imageUrl:'', imageFile:null }; isEditing.value=false; editingAccessoryId.value=null; if(fileInput.value) fileInput.value.value=''; setTimeout(()=>{ message.value=''; messageType.value=''; },3000); };
+const resetForm = () => { 
+
+  newAccessory.value = { name:'', description:'', price:null, stock:null, imageUrl:'', imageFile:null }; 
+  isEditing.value=false; 
+  editingAccessoryId.value=null; 
+  if(fileInput.value) fileInput.value.value=''; 
+  setTimeout(()=>{ message.value=''; messageType.value=''; },3000); 
+};
 const setMessage = (text,type) => { message.value=text; messageType.value=type; };
 </script>
 
 <style scoped>
-/* =======================
-   STYLE PRINCIPAL
-======================= */
+
 .admin-accessories { 
     padding: 15px; 
     color: white; 
@@ -239,9 +282,7 @@ h2 {
     margin: 20px 0; 
 }
 
-/* =======================
-   FORMULAIRE D'AJOUT
-======================= */
+
 .add-form-card { 
     background: #201e1eff; 
     color: white; 
@@ -252,12 +293,10 @@ h2 {
     padding: 0; 
 }
 
-/* Titre du formulaire */
 .add-form-card ion-card-title { 
     color: #e9d0dcff; 
 }
 
-/* Champs de saisie */
 .input-item { 
     --background: #2D2D2D; 
     --color: #fff; 
@@ -283,14 +322,12 @@ h2 {
     flex: 1; 
 }
 
-/* =======================
-   BOUTONS DU FORMULAIRE
-======================= */
+
 
 /* Bouton pour sélectionner/changer l'image */
 ion-button.image-button {
     --background: #ff69b4 !important; /* rose */
-    --color: #ffffff !important;       /* texte blanc */
+    --color: #ffffff !important;        /* texte blanc */
     border-radius: 8px;
     font-weight: bold;
 }
@@ -316,9 +353,7 @@ ion-button.cancel-button {
     opacity: 0.5; 
 }
 
-/* =======================
-   APERÇU IMAGE
-======================= */
+
 .image-preview-container { 
     margin-top: 15px; 
     padding: 10px; 
@@ -334,9 +369,7 @@ ion-button.cancel-button {
     object-fit: cover; 
 }
 
-/* =======================
-   MESSAGES
-======================= */
+
 .message { 
     padding: 10px; 
     margin-top: 15px; 
@@ -357,9 +390,7 @@ ion-button.cancel-button {
     color: #121212; 
 }
 
-/* =======================
-   LISTE DES ACCESSOIRES
-======================= */
+
 .list-title { 
     color: #fff; 
     margin-top: 30px; 
@@ -398,29 +429,22 @@ ion-thumbnail {
     border: 2px solid #c27ea0ff; 
 }
 
-/* =======================
-   BOUTONS DANS LA LISTE
-======================= */
 
-/* Bouton Modifier */
 .list-item-card ion-button.edit-btn {
     --background: #d41876ff !important; /* rose */
-    --color: #ffffff !important;       /* texte blanc */
+    --color: #ffffff !important;        /* texte blanc */
     border-radius: 8px;
     font-weight: bold;
 }
 
-/* Bouton Supprimer */
+
 .list-item-card ion-button.delete-btn {
     --background: #ff69b4 !important; /* rose */
-    --color: #ffffff !important;       /* texte blanc */
+    --color: #ffffff !important;        /* texte blanc */
     border-radius: 8px;
     font-weight: bold;
 }
 
-/* =======================
-   AUCUN ACCESSOIRE
-======================= */
 .no-accessories { 
     text-align: center; 
     color: #ccc; 
@@ -430,5 +454,4 @@ ion-thumbnail {
     margin-top: 20px; 
     background-color: #1F1F1F; 
 }
-
 </style>

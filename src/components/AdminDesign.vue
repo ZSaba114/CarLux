@@ -94,19 +94,17 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { isPlatform, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonInput, IonTextarea, IonButton, alertController, IonList, IonThumbnail } from '@ionic/vue';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-// ✅ Assurez-vous que le chemin est correct pour votre projet
 import { db } from '../../firebaseConfig'; 
 import { collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 
-// --- ÉTATS ---
 const fileInput = ref(null);
 const designs = ref([]);
 const newDesign = ref({
   name: '',
   description: '',
   price: null,
-  imageUrl: '', // Contiendra la chaîne Base64 (Data URL)
+  imageUrl: '', 
   imageFile: null, 
 });
 const isEditing = ref(false);
@@ -116,10 +114,8 @@ const message = ref('');
 const messageType = ref('');
 
 
-// --- LOGIQUE FIREBASE (Firestore) ---
 
 const fetchDesigns = () => {
-  // Collection différente pour les designs
   const designsCol = collection(db, 'designs'); 
   return onSnapshot(designsCol, (snapshot) => {
     designs.value = snapshot.docs.map(doc => ({
@@ -227,7 +223,6 @@ const deleteDesign = async (design) => {
     await alert.present();
 };
 
-// --- LOGIQUE D'UPLOAD D'IMAGE (Base64) ---
 
 const selectImage = async () => {
   if (isPlatform('capacitor')) {
@@ -288,7 +283,6 @@ const handleFileChange = (event) => {
 };
 
 
-// --- UTILITIES ---
 
 const resetForm = () => {
   newDesign.value = { name: '', description: '', price: null, imageUrl: '', imageFile: null };
@@ -305,9 +299,7 @@ const setMessage = (text, type) => {
 </script>
 
 <style scoped>
-/* =======================
-   STYLE PRINCIPAL
-======================= */
+
 .admin-design { 
     padding: 15px; 
     color: white; 
@@ -331,9 +323,7 @@ h2 {
     margin: 20px 0; 
 }
 
-/* =======================
-   FORMULAIRE D'AJOUT
-======================= */
+
 .add-form-card { 
     background: #201e1eff; 
     color: white; 
@@ -391,9 +381,7 @@ ion-button.cancel-button {
     opacity: 0.5; 
 }
 
-/* =======================
-   APERÇU IMAGE
-======================= */
+
 .image-preview-container { 
     margin-top: 15px; 
     padding: 10px; 
@@ -409,9 +397,7 @@ ion-button.cancel-button {
     object-fit: cover; 
 }
 
-/* =======================
-   MESSAGES
-======================= */
+
 .message { 
     padding: 10px; 
     margin-top: 15px; 
@@ -432,9 +418,7 @@ ion-button.cancel-button {
     color: #121212; 
 }
 
-/* =======================
-   LISTE DES DESIGNS
-======================= */
+
 .list-title { 
     color: #fff; 
     margin-top: 30px; 
@@ -472,9 +456,6 @@ ion-thumbnail {
     border: 2px solid #c27ea0ff; 
 }
 
-/* =======================
-   BOUTONS DANS LA LISTE
-======================= */
 .list-item-card ion-button.edit-btn {
     --background: #763b91ff !important; 
     --color: #ffffff !important; 
@@ -488,9 +469,7 @@ ion-thumbnail {
     font-weight: bold;
 }
 
-/* =======================
-   AUCUN DESIGN
-======================= */
+
 .no-designs { 
     text-align: center; 
     color: #ccc; 
